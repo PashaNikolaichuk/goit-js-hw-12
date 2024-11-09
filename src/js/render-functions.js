@@ -24,6 +24,7 @@ export function createMarkup(images) {
         <p> ${image.downloads}</p>
         </div>   
         </div>
+        
       </li>
     `
     )
