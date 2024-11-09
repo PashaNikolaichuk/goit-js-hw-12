@@ -12,6 +12,7 @@ const loadMore = document.querySelector('.btn-load');
 const lightbox = new SimpleLightbox('.gallery-item a');
 
 form.addEventListener('submit', handleSubmit);
+loadMore.addEventListener('click', onLoadMore);
 
 let page = 1;
 
@@ -55,7 +56,6 @@ async function handleSubmit(event) {
   }
 }
 
-loadMore.addEventListener('click', onLoadMore);
 async function onLoadMore() {
   page += 1;
   loadMore.disabled = true;
