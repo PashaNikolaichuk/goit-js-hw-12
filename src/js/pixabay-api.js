@@ -5,7 +5,7 @@ const BASE_URL = 'https://pixabay.com/api/';
 
 let page = 1;
 
-export async function getImageData(search = '', page = 1) {
+export async function getImageData(search = '') {
   const { data } = await axios(`${BASE_URL}`, {
     params: {
       key: API_KEY,
@@ -13,7 +13,8 @@ export async function getImageData(search = '', page = 1) {
       image_type: 'photo',
       orientation: 'horizontal',
       safesearch: true,
-      page,
+      page: 1,
+      per_page: 15, // Кількість зображень на кожній сторінці
     },
   });
   return data;

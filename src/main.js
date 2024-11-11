@@ -9,12 +9,14 @@ import { createMarkup } from './js/render-functions';
 const form = document.querySelector('.form-send-js');
 const list = document.querySelector('.list-js');
 const loadMore = document.querySelector('.btn-load');
+const loader = document.querySelector('.loader');
 const lightbox = new SimpleLightbox('.gallery-item a');
 
 form.addEventListener('submit', handleSubmit);
 loadMore.addEventListener('click', onLoadMore);
 
 let page = 1;
+let totalPages = 0;
 
 async function handleSubmit(event) {
   event.preventDefault();
@@ -27,9 +29,13 @@ async function handleSubmit(event) {
 
   page = 1;
   list.innerHTML = '';
+  loadMore.classList.add('hidden');
+  showLoader();
 
   try {
     const data = await getImageData(searchQuery, page);
+    totalPages = Math.ceil(data.totalHits / 15);
+
     if (data.hits.length === 0) {
       iziToast.info({
         title: 'No results',
@@ -42,10 +48,13 @@ async function handleSubmit(event) {
       list.innerHTML = createMarkup(data.hits);
       lightbox.refresh();
 
-      if (data.hits.length < data.totalHits) {
+      if (page < totalPages) {
         loadMore.classList.remove('hidden');
       } else {
-        loadMore.classList.add('hidden');
+        iziToast.info({
+          title: 'End of Collection',
+          message: "We're sorry, but you've reached the end of search results.",
+        });
       }
     }
   } catch (error) {
@@ -53,12 +62,15 @@ async function handleSubmit(event) {
       title: 'Error',
       message: 'Failed to fetch images. Try again.',
     });
+  } finally {
+    hideLoader();
   }
 }
 
 async function onLoadMore() {
   page += 1;
   loadMore.disabled = true;
+  showLoader();
 
   try {
     const searchQuery = form.elements.search.value.trim();
@@ -66,8 +78,12 @@ async function onLoadMore() {
     list.insertAdjacentHTML('beforeend', createMarkup(data.hits));
     lightbox.refresh();
 
-    if (data.hits.length >= data.totalHits) {
+    if (page >= totalPages) {
       loadMore.classList.add('hidden');
+      iziToast.info({
+        title: 'End of Collection',
+        message: "We're sorry, but you've reached the end of search results.",
+      });
     }
 
     const card = document.querySelector('.gallery-item');
@@ -87,5 +103,15 @@ async function onLoadMore() {
     });
   } finally {
     loadMore.disabled = false;
+    hideLoader();
   }
+}
+
+function showLoader() {
+  console.log('Показ лоадера');
+  loader.classList.remove('hidden');
+}
+
+function hideLoader() {
+  loader.classList.add('hidden');
 }
