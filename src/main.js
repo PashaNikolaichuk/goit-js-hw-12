@@ -34,7 +34,7 @@ async function handleSubmit(event) {
 
   try {
     const data = await getImageData(searchQuery, page);
-    totalPages = Math.ceil(data.totalHits / 100);
+    totalPages = Math.ceil(data.totalHits / 15);
 
     if (data.hits.length === 0) {
       iziToast.info({
